@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "clipboard": {
+      "command": "node",
+      "args": ["./mcp/clipboard-server.js"],
+      "env": {}
+    }
+  }
+}
+

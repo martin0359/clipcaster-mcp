@@ -1,0 +1,26 @@
+{
+  "name": "clipcaster-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Clipcaster MCP: a cross‑platform MCP clipboard server for AI CLIs (STDIO).",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martin0359/clipcaster-mcp.git"
+  },
+  "homepage": "https://github.com/martin0359/clipcaster-mcp",
+  "keywords": ["mcp","clipboard","cli","stdio","codex","gemini","claude"],
+  "bin": {
+    "mcp-clipboard-server": "./clipboard-server.js",
+    "mcp-clipboard": "./clipboard-server.js",
+    "clipcaster-mcp": "./clipboard-server.js",
+    "clip": "./clip.js"
+  },
+  "scripts": {
+    "start": "node ./clipboard-server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.2",
+    "zod": "^3.23.8"
+  }
+}
