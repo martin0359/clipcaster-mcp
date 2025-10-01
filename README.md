@@ -32,6 +32,12 @@
 - 可选本地 HTTP UI：自动在工具返回中附带浏览器地址，点开即可按条复制。
 - 重点：完整保留命令格式（引号、空格、heredoc、续行）避免在 CLI/聊天中粘贴被破坏。
 
+### Smart Copy · 智能复制（无需指定 write_bundle）
+- `assist_copy({ text, strategy? })`：根据文本自动决定“整段复制”或“分条复制（bundle）”。
+  - `strategy`: `auto`(默认) | `full` | `bundle`
+  - 触发分条的启发：多行、heredoc、代码围栏、顶层 `&&`/`||`/`;` 等。
+  - 返回格式中会包含 `mode: full|bundle`，以及（若启用）UI 地址。
+
 ---
 
 ## English
