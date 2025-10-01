@@ -7,6 +7,8 @@
 <p>
   <strong>Clipboard MCP for AI CLIs</strong><br/>
   <em>Preserve formatting · Whole paste by default · Stepwise in browser · Cross‑platform</em><br/>
+  <span>A tiny MCP server that lets AI CLIs copy commands perfectly — whole paste by default; stepwise in a browser when needed.</span><br/>
+  <span>让 AI CLI 的命令复制不走样：默认整段粘贴；需要时在浏览器逐条。</span><br/>
   <a href="https://www.npmjs.com/package/@martin0359/clipcaster-mcp"><img src="https://img.shields.io/npm/v/%40martin0359%2Fclipcaster-mcp?label=npm&color=cb3837" alt="npm version"></a>
   <img src="https://img.shields.io/node/v/@martin0359/clipcaster-mcp" alt="node version"/>
   <a href="https://github.com/martin0359/clipcaster-mcp"><img src="https://img.shields.io/github/stars/martin0359/clipcaster-mcp?style=social" alt="stars"></a>
@@ -26,6 +28,8 @@
 - Session pool remembers what you copied this session; it clears when the CLI exits.
 - Works on macOS, Linux (Wayland/X11), and Windows.
 
+---
+
 ## Quick Start (Codex)
 
 ```bash
@@ -40,6 +44,8 @@ Other CLIs (if they support MCP):
 - Gemini CLI: `gemini mcp add clipboard -- env CLIPCASTER_HTTP=1 "$(which clipcaster-mcp)"`
 - MCP Inspector / generic STDIO clients: configure `clipcaster-mcp` as the MCP server command; set `CLIPCASTER_HTTP=1` to enable the browser UI.
 
+---
+
 ## Usage
 
 - Whole Paste (most common)
@@ -48,6 +54,8 @@ Other CLIs (if they support MCP):
   - Say “Copy …”. For multi‑line/complex input, the tool creates a bundle and returns a browser URL.
   - Open the URL → expand items → click Copy per item. “Copy All” copies the whole bundle.
 
+---
+
 ## Cross‑Platform
 
 - macOS: `pbcopy` / `pbpaste`.
@@ -55,6 +63,8 @@ Other CLIs (if they support MCP):
 - Linux/BSD: backends (priority) `wl‑clipboard` → `xclip` → `xsel`.
 - X11 fallback: if `DISPLAY` is missing, tries `DISPLAY=:0` and `~/.Xauthority` (set explicitly if your display differs).
 - Browser UI: loopback only (127.0.0.1) with a random token; no desktop toolkit required.
+
+---
 
 ## Tools
 
@@ -115,4 +125,3 @@ codex mcp list
 - 分条：`write_bundle({ text, split_mode?, copy_full? })`、`list_bundle_items`、`copy_bundle_item`、`get_bundle_item`、`clear_bundle`、`bundle_info`。
 - 模型计划：`split_plan_template`（一次返回 items+label 的 JSON）、`write_bundle_with_plan({ plan, copy_full? })`（只用 items 落地；label 仅展示）。
 - 会话池：`list_pool_items`、`copy_pool_item`、`get_pool_item`、`clear_pool`（自动标签；会话内存）。
-
