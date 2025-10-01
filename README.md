@@ -192,6 +192,24 @@ Security
 
 ---
 
+## Session Pool · 会话池（含标签）
+
+- 自动记录：每次整段复制或分条保存的条目会加入“会话池”（仅本次会话内有效）。
+- 自动标签：未设置标签时，会根据文本首行自动生成 label（会在 UI 中显示），并记录 createdAt、intent(full|bundle|plan)。
+- 手动标签：`set_pool_label({ label })` 可设置本会话默认标签，方便按主题分组。未设置则保持自动。
+- 工具：
+  - `list_pool_items({ offset?, limit? })` → 返回 `{ index, createdAt, label, intent, preview, bytes }`。
+  - `copy_pool_item({ index })` / `get_pool_item({ index })` / `clear_pool()`。
+- UI：
+  - Session Pool 中每条可展开查看“完整内容”，标题显示 `[label] 时间 intent`；
+  - Current Bundle 区域同样可展开每条完整内容；
+  - “Full Bundle Text” 区域支持一键 Copy All（整段复制）。
+
+与模型协作生成标签（建议）
+- 你可以在对话里让模型按你的描述先生成一个短标签（如“部署脚本”），再让我调用 `set_pool_label({ label })`。不设置则自动生成。
+
+---
+
 ## Dev
 
 ```bash
