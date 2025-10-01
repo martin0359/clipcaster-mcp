@@ -116,6 +116,49 @@ codex mcp list
 
 ---
 
+## Bundle Tools (multi‑line commands)
+
+- `write_bundle({ text, split_mode? })` → Save a bundle (split into items) and copy full text to clipboard. `split_mode`: `smart` (default) | `simple` | `strict`.
+- `list_bundle_items({ bundleId?, offset?, limit? })` → List items: `{ index, preview, bytes }`.
+- `copy_bundle_item({ index, bundleId? })` → Copy one item to clipboard (format preserved).
+- `get_bundle_item({ index, bundleId? })` → Return full text of an item.
+- `bundle_info()` → `{ bundleId, count, ui }`.
+- `clear_bundle()` → Clear current bundle.
+
+Notes
+- Smart split keeps fenced code blocks, heredocs, and trailing backslash continuations intact.
+- Strict split only breaks on blank‑line separators.
+
+---
+
+## Optional Local HTTP UI
+
+Enable a lightweight local UI (loopback only) to browse and copy bundle items with one click. Disabled by default.
+
+```bash
+# Enable HTTP UI for current session
+export CLIPCASTER_HTTP=1
+# Optional: override host/port/token
+# export CLIPCASTER_HTTP_HOST=127.0.0.1
+# export CLIPCASTER_HTTP_PORT=0   # 0 = pick a free port
+# export CLIPCASTER_HTTP_TOKEN=your_token
+
+# Then start your AI CLI (e.g. Codex); the MCP server will spawn the UI.
+# Discover URL via tool:
+# codex → call tool: bundle_info()  → ui.url
+```
+
+Behavior
+- Runs on `127.0.0.1` with a random token; token required for all actions.
+- Purely optional; STDIO tools continue to work identically on all platforms.
+- No desktop/GUI dependency; just open in your browser.
+
+Security
+- UI listens only on loopback and requires token.
+- Data is stored locally under `~/.config/clipcaster/bundles.json` (recent bundle metadata + last bundle items).
+
+---
+
 ## Dev
 
 ```bash
