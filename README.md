@@ -26,6 +26,14 @@
 
 ---
 
+## What's New · 新功能
+
+- Bundle 工具：面向多行命令，既支持整段复制，也支持分条复制。
+- 可选本地 HTTP UI：自动在工具返回中附带浏览器地址，点开即可按条复制。
+- 重点：完整保留命令格式（引号、空格、heredoc、续行）避免在 CLI/聊天中粘贴被破坏。
+
+---
+
 ## English
 
 Clipcaster MCP is a tiny, reliable MCP server that gives AI CLIs clipboard powers via STDIO.
