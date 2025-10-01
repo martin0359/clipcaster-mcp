@@ -24,7 +24,8 @@
 
 ---
 
-## zh · 价值与场景 {#zh}
+<a id="zh"></a>
+## 中文 · 价值与场景
 
 - 完整保真：引号、空格、heredoc、续行、代码围栏均不被破坏。
 - 一句“帮我复制”：自动判定整段/分条（assist_copy）。
@@ -33,21 +34,21 @@
 
 ---
 
-## 功能概览
+## 功能概览（通俗版）
 
-- 智能复制 assist_copy({ text, strategy? })
-  - strategy=auto（默认）/ full / bundle
-  - 自动触发分条的信号：多行、heredoc、代码围栏、顶层 &&/||/;。
-  - 返回包含 mode: full|bundle 与（启用时）UI 地址。
+一句话说明：你只要在对话里说“帮我复制”，我会自动判断“整段复制”还是“按条复制”，并给你一个浏览器地址来逐条复制，避免命令在聊天/终端里被格式化破坏。
+
+- 自动决策复制方式：整段复制适合“一次跑完”；按条复制适合“逐步执行更稳”。
+- 浏览器可视化：同一会话一个固定地址，展开就能看到每一条命令，点 Copy 即可。
+- 会话池自动记录：这次会话复制过的内容都会暂存，关掉 Codex 会自动清空。
 
 - 分条工具（bundle）
-  - write_bundle({ text, split_mode?, copy_full? })
-  - list_bundle_items / copy_bundle_item / get_bundle_item / clear_bundle / bundle_info
-  - split_mode：smart（默认）/ simple / strict；copy_full=false 时仅保存分条
+  - write_bundle 保存并可整段复制；list/copy/get/clear_* 用于按条查看与复制。
+  - smart 分割会尽量保留 heredoc、代码块、续行等结构。
 
-- 模型一次产出（分条+标签合并模板）
-  - split_plan_template()：模板同时包含 label 与 items（JS 端仅使用 items 落地）
-  - write_bundle_with_plan({ plan, copy_full? })：落地分条；plan.label 被忽略
+- 模型一次产出（省 token）：
+  - split_plan_template → 模型一次返回 items（可带 label 文案）。
+  - write_bundle_with_plan 用 items 落地；label 仅用于显示，不写入会话。
 
 - 会话池（自动标签）
   - list_pool_items / copy_pool_item / get_pool_item / clear_pool
@@ -65,6 +66,39 @@
 
 ---
 
+## 不同 CLI 的快速安装/注册
+
+说明：先全局安装包，再在各自 CLI 中注册 MCP 服务器命令 `clipcaster-mcp`。带 UI 的版本更易用。
+
+- Codex CLI（推荐）
+  ```bash
+  npm i -g @martin0359/clipcaster-mcp
+  codex mcp remove clipboard || true
+  # 开启本地浏览器 UI（建议）
+  codex mcp add clipboard -- env CLIPCASTER_HTTP=1 "$(which clipcaster-mcp)"
+  # 如不需要 UI：codex mcp add clipboard -- "$(which clipcaster-mcp)"
+  codex mcp list
+  ```
+
+- Claude Code CLI（若其 CLI 支持 MCP 注册）
+  ```bash
+  claude-code mcp remove clipboard || true
+  claude-code mcp add clipboard -- env CLIPCASTER_HTTP=1 "$(which clipcaster-mcp)"
+  claude-code mcp list
+  ```
+
+- Gemini CLI（若其 CLI 支持 MCP 注册）
+  ```bash
+  gemini mcp remove clipboard || true
+  gemini mcp add clipboard -- env CLIPCASTER_HTTP=1 "$(which clipcaster-mcp)"
+  gemini mcp list
+  ```
+
+- MCP Inspector / 其他 MCP STDIO 客户端
+  - 原则：把 `clipcaster-mcp` 作为 STDIO MCP 服务器命令；必要时在配置里加入 `CLIPCASTER_HTTP=1` 环境变量。
+
+---
+
 ---
 
 ## Install & Register
@@ -75,7 +109,7 @@ npm i -g @martin0359/clipcaster-mcp
 
 # Register with Codex (idempotent)
 codex mcp remove clipboard || true
-codex mcp add clipboard -- $(which clipcaster-mcp)
+codex mcp add clipboard -- "$(which clipcaster-mcp)"
 codex mcp list
 ```
 
@@ -128,9 +162,8 @@ export CLIPCASTER_HTTP=1
 # export CLIPCASTER_HTTP_PORT=0   # 0 = pick a free port
 # export CLIPCASTER_HTTP_TOKEN=your_token
 
-# Then start your AI CLI (e.g. Codex); the MCP server will spawn the UI.
-# Discover URL via tool:
-# codex → call tool: bundle_info()  → ui.url
+# Then start Codex (or other CLI); the MCP server will spawn the UI.
+# To get the URL inside the CLI: call tool bundle_info() → ui.url
 ```
 
 Behavior
@@ -185,5 +218,33 @@ node ./clipboard-server.js  # waits for MCP client over STDIO
 
 Tips
 - 若某 CLI 仅支持 HTTP 传输，可扩展一个可选 HTTP 入口（保持 STDIO 作为默认）。如需我添加，请告知。
+
+---
+
+<a id="en"></a>
+## English · Overview
+
+- Plain benefit: Say “copy this”, the tool decides full vs bundle; your commands keep exact formatting.
+- Session pool with auto labels; optional local UI with per‑session URL; cross‑platform backends.
+
+Install & Register (Codex)
+```bash
+npm i -g @martin0359/clipcaster-mcp
+codex mcp remove clipboard || true
+codex mcp add clipboard -- env CLIPCASTER_HTTP=1 "$(which clipcaster-mcp)"
+```
+
+Other CLIs (if they support MCP):
+- Claude Code CLI: `claude-code mcp add clipboard -- env CLIPCASTER_HTTP=1 "$(which clipcaster-mcp)"`
+- Gemini CLI: `gemini mcp add clipboard -- env CLIPCASTER_HTTP=1 "$(which clipcaster-mcp)"`
+- Any STDIO client: configure `clipcaster-mcp` as the server command.
+
+Key tools
+- assist_copy, write_clipboard, read_clipboard, clear_clipboard, clipboard_info
+- write_bundle, list/copy/get/clear_bundle, bundle_info
+- split_plan_template, write_bundle_with_plan
+- list/copy/get/clear_pool
+
+---
 
 MIT © 2025 martin0359
