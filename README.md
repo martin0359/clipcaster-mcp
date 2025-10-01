@@ -40,6 +40,12 @@ Clipcaster MCP is a tiny, reliable MCP server that gives AI CLIs clipboard power
 - OS backends: macOS (pbcopy/pbpaste), Windows (PowerShell), Linux/BSD (wl-clipboard → xclip → xsel)
 - X11 fallback: auto `DISPLAY=:0` + `~/.Xauthority` when missing
 
+— Use Cases —
+- Paste‑perfect complex commands: multi‑line scripts, quotes, spaces, heredocs—no formatting breaks.
+- Quick handoff between AI CLI and shell: “Copy this command” instead of manual typing.
+- Team workflows: share exact commands/tools without chat platform reformatting.
+- Cross‑OS convenience: one MCP tool abstracts different clipboard backends.
+
 — Quick Start —
 - Install: `npm i -g @martin0359/clipcaster-mcp`
 - Register (Codex): `codex mcp add clipboard -- $(which clipcaster-mcp)`
@@ -50,6 +56,8 @@ Clipcaster MCP is a tiny, reliable MCP server that gives AI CLIs clipboard power
 - Examples (pseudo):
   - Claude Code CLI: `claude-code mcp add clipboard -- $(which clipcaster-mcp)`
   - Gemini CLI: `gemini mcp add clipboard -- $(which clipcaster-mcp)`
+
+ 
 
 — Troubleshooting —
 - No tools listed: restart the CLI, ensure `codex mcp list` shows `clipboard`.
@@ -67,6 +75,12 @@ Clipcaster MCP 是一个面向“命令行 AI 工具”的轻量 MCP 服务器�
 - 工具: `read_clipboard()`, `write_clipboard({ text })`, `clear_clipboard()`, `clipboard_info()`
 - 系统后端: macOS(pbpaste/pbcopy)、Windows(PowerShell)、Linux/BSD(wl-clipboard → xclip → xsel)
 - X11 自适应: 若未传入图形环境，自动尝试 `DISPLAY=:0` 与 `~/.Xauthority`
+
+— 应用场景 —
+- 复杂命令“完美粘贴”：多行脚本、引号、空格、heredoc 不再被聊天/终端折叠或破坏。
+- AI CLI ↔ 终端快捷分工：直接说“把命令复制到剪贴板”，少打字、少出错。
+- 团队共享：把完全一致的命令分发给同事，避免格式化差异。
+- 跨系统统一：一个 MCP 工具屏蔽不同系统的剪贴板差异。
 
 — 快速开始 —
 - 安装: `npm i -g @martin0359/clipcaster-mcp`
@@ -122,6 +136,8 @@ node ./clipboard-server.js  # waits for MCP client over STDIO
 - Claude Code CLI（若提供 MCP 注册能力）
 - Gemini CLI（若提供 MCP 注册能力）
 - 任何支持 MCP·STDIO 的 AI CLI 客户端（可通过命令 `clipcaster-mcp` 注册）
+
+ 
 
 Tips
 - 若某 CLI 仅支持 HTTP 传输，可扩展一个可选 HTTP 入口（保持 STDIO 作为默认）。如需我添加，请告知。
