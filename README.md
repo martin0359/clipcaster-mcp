@@ -127,11 +127,30 @@ codex mcp list
 ## Bundle Tools (multi‑line commands)
 
 - `write_bundle({ text, split_mode? })` → Save a bundle (split into items) and copy full text to clipboard. `split_mode`: `smart` (default) | `simple` | `strict`.
+- `write_bundle({ text, split_mode?, copy_full? })` → `copy_full` 为 false 时仅保存分条，不整段复制。
 - `list_bundle_items({ bundleId?, offset?, limit? })` → List items: `{ index, preview, bytes }`.
 - `copy_bundle_item({ index, bundleId? })` → Copy one item to clipboard (format preserved).
 - `get_bundle_item({ index, bundleId? })` → Return full text of an item.
 - `bundle_info()` → `{ bundleId, count, ui }`.
 - `clear_bundle()` → Clear current bundle.
+
+### Model‑assisted splitting（与模型协商分割）
+- `split_plan_template()` → 返回模型应当输出的 JSON 模板。
+- `write_bundle_with_plan({ plan, copy_full? })` → 使用模型提供的 `plan.items[]` 作为分条结果。
+
+示例 JSON（模型产出）：
+```json
+{
+  "mode": "model",
+  "intent": "bundle-stepwise",
+  "rationale": "将 heredoc 视为一条，其他按顶层 &&/||/; 拆分",
+  "items": [
+    "mkdir -p \"/tmp/bundle demo\"",
+    "cat > \"/tmp/bundle demo/run.sh\" <<'EOF'\n...heredoc content...\nEOF",
+    "chmod +x \"/tmp/bundle demo/run.sh\" && bash \"/tmp/bundle demo/run.sh\""
+  ]
+}
+```
 
 Notes
 - Smart split keeps fenced code blocks, heredocs, and trailing backslash continuations intact.
