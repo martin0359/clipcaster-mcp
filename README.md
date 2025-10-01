@@ -2,13 +2,11 @@
 
 <img src="assets/logo.svg" width="128" height="128" alt="Clipcaster MCP logo"/>
 
-<h1>
-  ✨ Clipcaster MCP ✨
-</h1>
+<h1>Clipcaster MCP</h1>
 
 <p>
-  <strong>CLI‑first, cross‑platform MCP clipboard server</strong><br/>
-  <em>面向命令行 AI 工具 · 跨平台 · 零额外依赖（Node ESM）</em>
+  <strong>让 AI CLI “完美复制命令” 的 MCP 服务器</strong><br/>
+  <em>跨平台 · 保留原格式 · 支持按条复制 · 可选本地浏览器 UI</em>
   <br/>
   <a href="https://www.npmjs.com/package/@martin0359/clipcaster-mcp"><img src="https://img.shields.io/npm/v/%40martin0359%2Fclipcaster-mcp?label=npm&color=cb3837" alt="npm version"></a>
   <a href="https://www.npmjs.com/package/@martin0359/clipcaster-mcp"><img src="https://img.shields.io/npm/dm/%40martin0359%2Fclipcaster-mcp.svg" alt="npm downloads"></a>
@@ -26,91 +24,44 @@
 
 ---
 
-## What's New · 新功能
+## zh · 价值与场景 {#zh}
 
-- Bundle 工具：面向多行命令，既支持整段复制，也支持分条复制。
-- 可选本地 HTTP UI：自动在工具返回中附带浏览器地址，点开即可按条复制。
-- 重点：完整保留命令格式（引号、空格、heredoc、续行）避免在 CLI/聊天中粘贴被破坏。
-
-### Smart Copy · 智能复制（无需指定 write_bundle）
-- `assist_copy({ text, strategy? })`：根据文本自动决定“整段复制”或“分条复制（bundle）”。
-  - `strategy`: `auto`(默认) | `full` | `bundle`
-  - 触发分条的启发：多行、heredoc、代码围栏、顶层 `&&`/`||`/`;` 等。
-  - 返回格式中会包含 `mode: full|bundle`，以及（若启用）UI 地址。
+- 完整保真：引号、空格、heredoc、续行、代码围栏均不被破坏。
+- 一句“帮我复制”：自动判定整段/分条（assist_copy）。
+- 会话池：整段/分条均入池，浏览器中逐条复制；会话结束自动清空；自动标签。
+- 跨平台：macOS / Linux（Wayland/X11）/ Windows。
 
 ---
 
-## English
+## 功能概览
 
-Clipcaster MCP is a tiny, reliable MCP server that gives AI CLIs clipboard powers via STDIO.
+- 智能复制 assist_copy({ text, strategy? })
+  - strategy=auto（默认）/ full / bundle
+  - 自动触发分条的信号：多行、heredoc、代码围栏、顶层 &&/||/;。
+  - 返回包含 mode: full|bundle 与（启用时）UI 地址。
 
-- Tools: `read_clipboard()`, `write_clipboard({ text })`, `clear_clipboard()`, `clipboard_info()`
-- OS backends: macOS (pbcopy/pbpaste), Windows (PowerShell), Linux/BSD (wl-clipboard → xclip → xsel)
-- X11 fallback: auto `DISPLAY=:0` + `~/.Xauthority` when missing
+- 分条工具（bundle）
+  - write_bundle({ text, split_mode?, copy_full? })
+  - list_bundle_items / copy_bundle_item / get_bundle_item / clear_bundle / bundle_info
+  - split_mode：smart（默认）/ simple / strict；copy_full=false 时仅保存分条
 
-### Key Benefit
-- Paste‑perfect complex commands. Avoids CLI/chat UI reformatting that breaks quotes, spaces, and heredocs.
+- 模型一次产出（分条+标签合并模板）
+  - split_plan_template()：模板同时包含 label 与 items（JS 端仅使用 items 落地）
+  - write_bundle_with_plan({ plan, copy_full? })：落地分条；plan.label 被忽略
 
-### Use Cases
-- Paste‑perfect complex commands: multi‑line scripts, quotes, spaces, heredocs—no formatting breaks.
-- Quick handoff between AI CLI and shell: “Copy this command” instead of manual typing.
-- Team workflows: share exact commands/tools without chat platform reformatting.
-- Cross‑OS convenience: one MCP tool abstracts different clipboard backends.
-
-— Quick Start —
-- Install: `npm i -g @martin0359/clipcaster-mcp`
-- Register (Codex): `codex mcp add clipboard -- $(which clipcaster-mcp)`
-- Use: in Codex, just say “Copy ‘hello’ to clipboard” (no need to say “use MCP”).
-
-### Use with other AI CLIs
-- Any MCP‑capable CLI can register the server command `clipcaster-mcp`.
-- Examples (pseudo):
-  - Claude Code CLI: `claude-code mcp add clipboard -- $(which clipcaster-mcp)`
-  - Gemini CLI: `gemini mcp add clipboard -- $(which clipcaster-mcp)`
-
- 
-
-### Troubleshooting
-- No tools listed: restart the CLI, ensure `codex mcp list` shows `clipboard`.
-- Timeout: run `npm install` in project folder; register using absolute path; on Linux install `wl-clipboard` or `xclip`.
-- Linux write fails: check `DISPLAY`/Wayland; optionally set `env = { DISPLAY=":0", XAUTHORITY="~/.Xauthority" }` in the client MCP config.
+- 会话池（自动标签）
+  - list_pool_items / copy_pool_item / get_pool_item / clear_pool
+  - UI 展开完整内容，支持 Copy All（整段）
 
 ---
 
 ---
 
-## 中文
+## 兼容与安全
 
-Clipcaster MCP 是一个面向“命令行 AI 工具”的轻量 MCP 服务器，通过 STDIO 让 AI 具备读写系统剪贴板的能力。
-
-- 工具: `read_clipboard()`, `write_clipboard({ text })`, `clear_clipboard()`, `clipboard_info()`
-- 系统后端: macOS(pbpaste/pbcopy)、Windows(PowerShell)、Linux/BSD(wl-clipboard → xclip → xsel)
-- X11 自适应: 若未传入图形环境，自动尝试 `DISPLAY=:0` 与 `~/.Xauthority`
-
-### 关键价值
-- 复杂命令“完美粘贴”，防止在 CLI/聊天界面中被自动换行或格式化破坏（引号、空格、heredoc 等）。
-
-### 应用场景
-- 复杂命令“完美粘贴”：多行脚本、引号、空格、heredoc 不再被聊天/终端折叠或破坏。
-- AI CLI ↔ 终端快捷分工：直接说“把命令复制到剪贴板”，少打字、少出错。
-- 团队共享：把完全一致的命令分发给同事，避免格式化差异。
-- 跨系统统一：一个 MCP 工具屏蔽不同系统的剪贴板差异。
-
-— 快速开始 —
-- 安装: `npm i -g @martin0359/clipcaster-mcp`
-- 在 Codex 中注册: `codex mcp add clipboard -- $(which clipcaster-mcp)`
-- 使用: 直接说“把‘hello’复制到剪贴板”，无需强调“使用 MCP”。
-
-### 适配其他 AI CLI
-- 任何支持 MCP 的 CLI 都可以把 `clipcaster-mcp` 注册为服务器命令。
-- 示例（思路）：
-  - Claude Code CLI: `claude-code mcp add clipboard -- $(which clipcaster-mcp)`
-  - Gemini CLI: `gemini mcp add clipboard -- $(which clipcaster-mcp)`
-
-### 常见问题
-- 看不到工具: 重启 CLI；确认 `codex mcp list` 里有 `clipboard`。
-- 超时: 在项目目录执行 `npm install`；注册时使用绝对路径；Linux 安装 `wl-clipboard` 或 `xclip`。
-- Linux 写入失败: 检查 `DISPLAY`/Wayland；必要时在该 CLI 的 MCP 配置中为本服务器添加 `env = { DISPLAY=":0", XAUTHORITY="~/.Xauthority" }`。
+- 后端：macOS(pbpaste/pbcopy)、Windows(PowerShell Get/Set-Clipboard)、Linux/BSD(wl-clipboard → xclip → xsel)
+- X11 自适应：缺少 DISPLAY 时尝试 `DISPLAY=:0` 与 `~/.Xauthority`
+- 本地 UI：仅回环 127.0.0.1，随机 token；不开启不影响 STDIO 工具
 
 ---
 
