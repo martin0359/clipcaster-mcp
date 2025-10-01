@@ -16,7 +16,7 @@
   <a href="https://github.com/martin0359/clipcaster-mcp/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="license"></a>
   <a href="https://github.com/martin0359/clipcaster-mcp"><img src="https://img.shields.io/github/stars/martin0359/clipcaster-mcp?style=social" alt="stars"></a>
   <br/>
-  <a href="#english">English</a> • <a href="#中文">中文</a>
+  <a href="#zh">中文</a> • <a href="#en">English</a>
   <br/><br/>
 </p>
 
@@ -140,16 +140,17 @@ codex mcp list
 - `bundle_info()` → `{ bundleId, count, ui }`.
 - `clear_bundle()` → Clear current bundle.
 
-### Model‑assisted splitting（与模型协商分割）
-- `split_plan_template()` → 返回模型应当输出的 JSON 模板。
-- `write_bundle_with_plan({ plan, copy_full? })` → 使用模型提供的 `plan.items[]` 作为分条结果。
+### Model‑assisted（模型一次产出“分条+标签”）
+- `split_plan_template()` → 返回合并模板：模型一次给出 label 与 items（JS 端仅使用 items 建立 bundle，label 仅作显示用途）。
+- `write_bundle_with_plan({ plan, copy_full? })` → 读取模型 `plan.items[]` 建立 bundle；`plan.label` 将被忽略（标签为自动生成）。
 
-示例 JSON（模型产出）：
+合并模板示例（模型产出）：
 ```json
 {
   "mode": "model",
-  "intent": "bundle-stepwise",
+  "intent": "bundle-stepwise+label",
   "rationale": "将 heredoc 视为一条，其他按顶层 &&/||/; 拆分",
+  "label": "部署脚本",
   "items": [
     "mkdir -p \"/tmp/bundle demo\"",
     "cat > \"/tmp/bundle demo/run.sh\" <<'EOF'\n...heredoc content...\nEOF",
@@ -192,11 +193,10 @@ Security
 
 ---
 
-## Session Pool · 会话池（含标签）
+## Session Pool · 会话池（自动标签）
 
 - 自动记录：每次整段复制或分条保存的条目会加入“会话池”（仅本次会话内有效）。
-- 自动标签：未设置标签时，会根据文本首行自动生成 label（会在 UI 中显示），并记录 createdAt、intent(full|bundle|plan)。
-- 手动标签：`set_pool_label({ label })` 可设置本会话默认标签，方便按主题分组。未设置则保持自动。
+- 自动标签：根据文本首行自动生成 label（在 UI 中显示），同时记录 createdAt、intent(full|bundle|plan)。
 - 工具：
   - `list_pool_items({ offset?, limit? })` → 返回 `{ index, createdAt, label, intent, preview, bytes }`。
   - `copy_pool_item({ index })` / `get_pool_item({ index })` / `clear_pool()`。
@@ -205,8 +205,7 @@ Security
   - Current Bundle 区域同样可展开每条完整内容；
   - “Full Bundle Text” 区域支持一键 Copy All（整段复制）。
 
-与模型协作生成标签（建议）
-- 你可以在对话里让模型按你的描述先生成一个短标签（如“部署脚本”），再让我调用 `set_pool_label({ label })`。不设置则自动生成。
+标签无需手动设置：为避免操作负担和泄露风险，系统仅使用自动标签（可在模型回复中展示 label 文案，但不写入会话标签）。
 
 ---
 
